@@ -1,8 +1,37 @@
 "use client";
-const Form = () => {
+
+import { useState } from "react";
+import { Item } from "@/types";
+
+interface FormProps {
+  onAddItems: (item: Item) => void;
+}
+
+const Form: React.FC<FormProps> = ({ onAddItems }) => {
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!description) {
+      alert("Please enter an item name.");
+      return;
+    }
+
+    const newItem = {
+      name: description, // Use description as the name
+      description,
+      quantity,
+      packed: false,
+      id: Math.random().toString(),
+    };
+
+    onAddItems(newItem);
+    setDescription("");
+    setQuantity(1);
   }
+
   return (
     <div className="w-full max-w-3xl mx-auto">
       <form
@@ -21,7 +50,11 @@ const Form = () => {
             >
               Quantity
             </label>
-            <select className="bg-white border border-indigo-200 rounded-md py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 shadow-sm">
+            <select
+              className="bg-white border border-indigo-200 rounded-md py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 shadow-sm"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            >
               {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                 <option value={num} key={num}>
                   {num}
@@ -40,6 +73,9 @@ const Form = () => {
             <input
               type="text"
               className="bg-white border border-indigo-200 rounded-md w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 shadow-sm"
+              placeholder="Enter item name"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
